@@ -6,6 +6,8 @@ import FeaturedProducts from "@modules/home/components/featured-products"
 import Hero from "@modules/home/components/hero"
 import { ProductCollectionWithPreviews } from "types/global"
 import { cache } from "react"
+import ProductCarouselServer from "@modules/products/components/product-carousel/ProductCarousel.server";
+
 
 export const metadata: Metadata = {
   title: "Medusa Next.js Starter Template",
@@ -53,6 +55,7 @@ const getCollectionsWithProducts = cache(
     return collections as unknown as ProductCollectionWithPreviews[]
   }
 )
+// full_web-storefront/src/app/[countryCode]/(main)/page.tsx
 
 export default async function Home({
   params: { countryCode },
@@ -68,12 +71,10 @@ export default async function Home({
 
   return (
     <>
-      <Hero />
-      <div className="py-12">
-        <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
-        </ul>
-      </div>
+      <Hero region={region} countryCode={countryCode} />
+      {/* ProductCarousel Integrato */}
+      <ProductCarouselServer tag="halloween" countryCode={countryCode} />
+      
     </>
   )
 }

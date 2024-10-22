@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/modal/index.tsx
+
 import { Dialog, Transition } from "@headlessui/react"
 import { clx } from "@medusajs/ui"
 import React, { Fragment } from "react"
@@ -34,7 +36,7 @@ const Modal = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-opacity-75 backdrop-blur-md  h-screen" />
+          <div className="fixed inset-0 bg-opacity-75 backdrop-blur-md h-screen" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-hidden">
@@ -65,7 +67,7 @@ const Modal = ({
                     "max-w-xl": size === "medium",
                     "max-w-3xl": size === "large",
                     "bg-transparent shadow-none": search,
-                    "bg-white shadow-xl border rounded-rounded": !search,
+                    "bg-neumorphism-bg shadow-neumorphism-light border rounded-lg hover:shadow-neumorphism-dark": !search,
                   }
                 )}
               >
@@ -83,8 +85,8 @@ const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { close } = useModal()
 
   return (
-    <Dialog.Title className="flex items-center justify-between">
-      <div className="text-large-semi">{children}</div>
+    <Dialog.Title className="flex items-center justify-between bg-neumorphism-bg rounded-t-lg shadow-neumorphism-light p-4 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
+      <div className="text-large-semi text-gray-800">{children}</div>
       <div>
         <button onClick={close} data-testid="close-modal-button">
           <X size={20} />
@@ -96,18 +98,18 @@ const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const Description: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Dialog.Description className="flex text-small-regular text-ui-fg-base items-center justify-center pt-2 pb-4 h-full">
+    <Dialog.Description className="flex text-small-regular text-gray-700 items-center justify-center pt-2 pb-4 h-full">
       {children}
     </Dialog.Description>
   )
 }
 
 const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <div className="flex justify-center">{children}</div>
+  return <div className="flex justify-center bg-neumorphism-bg rounded-b-lg shadow-neumorphism-light p-4 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">{children}</div>
 }
 
 const Footer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <div className="flex items-center justify-end gap-x-4">{children}</div>
+  return <div className="flex items-center justify-end gap-x-4 bg-neumorphism-bg rounded-b-lg shadow-neumorphism-light p-4 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">{children}</div>
 }
 
 Modal.Title = Title

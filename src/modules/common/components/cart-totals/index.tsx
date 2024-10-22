@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/cart-totals/index.tsx
+
 "use client"
 
 import { formatAmount } from "@lib/util/prices"
@@ -29,8 +31,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
   }
 
   return (
-    <div>
-      <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
+    <div className="bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-6 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
+      <div className="flex flex-col gap-y-2 text-medium text-gray-700">
         <div className="flex items-center justify-between">
           <span className="flex gap-x-1 items-center">
             Subtotal
@@ -61,7 +63,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="flex gap-x-1 items-center ">Taxes</span>
+          <span className="flex gap-x-1 items-center">Taxes</span>
           <span data-testid="cart-taxes" data-value={tax_total || 0}>
             {getAmount(tax_total)}
           </span>
@@ -80,10 +82,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         )}
       </div>
       <div className="h-px w-full border-b border-gray-200 my-4" />
-      <div className="flex items-center justify-between text-ui-fg-base mb-2 txt-medium ">
+      <div className="flex items-center justify-between text-gray-900 mb-2 text-xl font-semibold">
         <span>Total</span>
         <span
-          className="txt-xlarge-plus"
+          className="text-2xl font-semibold"
           data-testid="cart-total"
           data-value={total || 0}
         >

@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/delete-button/index.tsx
+
 import { Spinner, Trash } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { useState } from "react"
@@ -25,7 +27,7 @@ const DeleteButton = ({
   return (
     <div
       className={clx(
-        "flex items-center justify-between text-small-regular",
+        "flex items-center justify-between bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-2 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark",
         className
       )}
     >

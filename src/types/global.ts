@@ -56,3 +56,15 @@ export type ProductCategoryWithChildren = Omit<
   category_children: ProductCategory[]
   category_parent?: ProductCategory
 }
+
+export type TransformedProductType = {
+  id: string
+  title: string
+  handle: string
+  thumbnail: string
+  variants: { id: string }[]
+  price: {
+    calculated_price: number | null
+    original_price: number | null
+  }
+}

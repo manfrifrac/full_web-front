@@ -1,37 +1,37 @@
-import { Dialog, Transition } from "@headlessui/react"
+import { Dialog, Transition } from "@headlessui/react";
 import {
   PricedProduct,
   PricedVariant,
-} from "@medusajs/medusa/dist/types/pricing"
-import { Button, clx } from "@medusajs/ui"
-import React, { Fragment, useMemo } from "react"
+} from "@medusajs/medusa/dist/types/pricing";
+import { Button, clx } from "@medusajs/ui";
+import React, { Fragment, useEffect, useMemo } from "react";
 
-import useToggleState from "@lib/hooks/use-toggle-state"
-import ChevronDown from "@modules/common/icons/chevron-down"
-import X from "@modules/common/icons/x"
+import useToggleState from "@lib/hooks/use-toggle-state";
+import ChevronDown from "@modules/common/icons/chevron-down";
+import X from "@modules/common/icons/x";
 
-import { getProductPrice } from "@lib/util/get-product-price"
-import { Region } from "@medusajs/medusa"
-import OptionSelect from "../option-select"
+import { getProductPrice } from "@lib/util/get-product-price";
+import { Region } from "@medusajs/medusa";
+import OptionSelect from "../option-select";
 
 type MobileActionsProps = {
-  product: PricedProduct
-  variant?: PricedVariant
-  region: Region
-  options: Record<string, string>
-  updateOptions: (update: Record<string, string>) => void
-  inStock?: boolean
-  handleAddToCart: () => void
-  isAdding?: boolean
-  show: boolean
-  optionsDisabled: boolean
-}
+  product: PricedProduct;
+  variant?: PricedVariant;
+  region: Region;
+  options: Record<string, string>;
+  updateOptions: (update: Record<string, string>) => void;
+  inStock?: boolean;
+  handleAddToCart: () => void;
+  isAdding?: boolean;
+  show: boolean;
+  optionsDisabled: boolean;
+};
 
 const MobileActions: React.FC<MobileActionsProps> = ({
   product,
   variant,
   region,
-  options,
+  options = {},
   updateOptions,
   inStock,
   handleAddToCart,
@@ -39,22 +39,27 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
 }) => {
-  const { state, open, close } = useToggleState()
+  const { state, open, close } = useToggleState();
 
   const price = getProductPrice({
     product: product,
     variantId: variant?.id,
     region,
-  })
+  });
 
   const selectedPrice = useMemo(() => {
     if (!price) {
-      return null
+      return null;
     }
-    const { variantPrice, cheapestPrice } = price
+    const { variantPrice, cheapestPrice } = price;
 
-    return variantPrice || cheapestPrice || null
-  }, [price])
+    return variantPrice || cheapestPrice || null;
+  }, [price]);
+
+  // Debugging logs
+  useEffect(() => {
+    console.log("MobileActions options:", options);
+  }, [options]);
 
   return (
     <>
@@ -112,7 +117,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div className="flex items-center justify-between w-full">
                   <span>
                     {variant
-                      ? Object.values(options).join(" / ")
+                      ? Object.values(options || {}).join(" / ")
                       : "Select Options"}
                   </span>
                   <ChevronDown />
@@ -187,7 +192,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                                 disabled={optionsDisabled}
                               />
                             </div>
-                          )
+                          );
                         })}
                       </div>
                     )}
@@ -199,7 +204,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default MobileActions
+export default MobileActions;

@@ -55,3 +55,25 @@ dump.rdb
 /blob-report/
 /playwright/.cache/
 /playwright/.auth
+
+
+# Dipendenze
+node_modules/
+
+# Output di build di Next.js
+.next/
+out/
+
+# Variabili d'ambiente
+.env
+.env.local
+
+# Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File di sistema
+.DS_Store
+
+# Altri file o cartelle specifiche del frontend

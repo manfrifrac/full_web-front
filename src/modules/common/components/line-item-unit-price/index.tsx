@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/line-item-unit-price/index.tsx
+
 import { formatAmount } from "@lib/util/prices"
 import { LineItem, Region } from "@medusajs/medusa"
 import { clx } from "@medusajs/ui"
@@ -21,12 +23,12 @@ const LineItemUnitPrice = ({
   const reducedPrice = (item.total || 0) / item.quantity!
 
   return (
-    <div className="flex flex-col text-ui-fg-muted justify-center h-full">
+    <div className="flex flex-col text-gray-600 justify-center h-full bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-4 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
       {hasReducedPrice && (
         <>
           <p>
             {style === "default" && (
-              <span className="text-ui-fg-muted">Original: </span>
+              <span className="text-gray-500">Original: </span>
             )}
             <span className="line-through" data-testid="product-unit-original-price">
               {formatAmount({

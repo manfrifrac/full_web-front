@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/filter-radio-group/index.tsx
+
 import { EllipseMiniSolid } from "@medusajs/icons"
 import { Label, RadioGroup, Text, clx } from "@medusajs/ui"
 import { ChangeEvent } from "react"
@@ -21,8 +23,8 @@ const FilterRadioGroup = ({
   'data-testid': dataTestId
 }: FilterRadioGroupProps) => {
   return (
-    <div className="flex gap-x-3 flex-col gap-y-3">
-      <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
+    <div className="flex flex-col gap-y-3 bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-4 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
+      <Text className="txt-compact-small-plus text-gray-600">{title}</Text>
       <RadioGroup data-testid={dataTestId}>
         {items?.map((i) => (
           <div
@@ -45,12 +47,11 @@ const FilterRadioGroup = ({
               value={i.value}
             />
             <Label
-              placeholder={i.label}
               htmlFor={i.value}
               className={clx(
-                "!txt-compact-small !transform-none text-ui-fg-subtle hover:cursor-pointer",
+                "!txt-compact-small !transform-none text-gray-700 hover:cursor-pointer",
                 {
-                  "text-ui-fg-base": i.value === value,
+                  "text-gray-900": i.value === value,
                 }
               )}
               data-testid="radio-label"

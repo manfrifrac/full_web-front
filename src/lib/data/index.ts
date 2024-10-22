@@ -1,3 +1,5 @@
+// File: full_web-storefront\src\lib\data\index.ts
+
 import {
   ProductCategory,
   ProductCollection,
@@ -9,23 +11,25 @@ import {
   StorePostCustomersCustomerAddressesReq,
   StorePostCustomersCustomerReq,
   StorePostCustomersReq,
-} from "@medusajs/medusa"
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing"
-import { cache } from "react"
+  ProductTag, // Import ProductTag directly from Medusa
+} from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { cache } from "react";
 
-import sortProducts from "@lib/util/sort-products"
-import transformProductPreview from "@lib/util/transform-product-preview"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import { ProductCategoryWithChildren, ProductPreviewType } from "types/global"
+import sortProducts from "@lib/util/sort-products";
+import transformProductPreview from "@lib/util/transform-product-preview";
+import { SortOptions } from "@modules/store/components/refinement-list/sort-products";
+import { ProductCategoryWithChildren, ProductPreviewType } from "types/global";
 
-import { medusaClient } from "@lib/config"
-import medusaError from "@lib/util/medusa-error"
-import { cookies } from "next/headers"
+import { medusaClient } from "@lib/config";
+import medusaError from "@lib/util/medusa-error";
+import { cookies } from "next/headers";
+import { Product } from "@medusajs/product";
 
 const emptyResponse = {
   response: { products: [], count: 0 },
   nextPage: null,
-}
+};
 
 /**
  * Function for getting custom headers for Medusa API requests, including the JWT token and cache revalidation tags.
@@ -34,22 +38,22 @@ const emptyResponse = {
  * @returns custom headers for Medusa API requests
  */
 const getMedusaHeaders = (tags: string[] = []) => {
-  const headers = {
+  const headers: Record<string, any> = {
     next: {
       tags,
     },
-  } as Record<string, any>
+  };
 
-  const token = cookies().get("_medusa_jwt")?.value
+  const token = cookies().get("_medusa_jwt")?.value;
 
   if (token) {
-    headers.authorization = `Bearer ${token}`
+    headers.authorization = `Bearer ${token}`;
   } else {
-    headers.authorization = ""
+    headers.authorization = "";
   }
 
-  return headers
-}
+  return headers;
+};
 
 // Cart actions
 export async function createCart(data = {}) {
@@ -419,7 +423,11 @@ export const retrievePricedProductById = cache(async function ({
   const headers = getMedusaHeaders(["products"])
 
   return medusaClient.products
-    .retrieve(`${id}?region_id=${regionId}`, headers)
+   .retrieve(id, {
+     ...headers,
+     region_id: regionId,
+     expand: "variants,variants.prices,options, options.values",
+   })
     .then(({ product }) => product)
     .catch((err) => {
       console.log(err)
@@ -755,3 +763,239 @@ export const getProductsByCategoryHandle = cache(async function ({
     nextPage,
   }
 })
+
+// Tag actions
+interface StoreProductTagsListRes {
+  product_tags: ProductTag[];
+}
+
+export const retrieveTag = cache(async function (
+  value: string
+): Promise<ProductTag | null> {
+  try {
+
+    const response: StoreProductTagsListRes = await medusaClient.productTags.list(
+      { value: [value] }, // Correct query parameter
+      { next: { tags: ["tags"] } }
+    );
+
+
+    const tag = response.product_tags.find(
+      (t) => t.value.toLowerCase() === value.toLowerCase()
+    ) || null;
+
+    if (tag) {
+      console.log(`Tag found:`, tag)
+    } else {
+      console.warn(`No tag found with value "${value}"`)
+    }
+
+    return tag;
+  } catch (err: any) {
+    console.error("Error retrieving tag:", err);
+    return null;
+  }
+});
+
+// Function to get list of tags
+export const getTagsList = cache(async function (
+  offset: number = 0,
+  limit: number = 100
+): Promise<{ tags: ProductTag[]; count: number }> {
+  console.log("API Call with parameters:", { limit, offset });  // Logging for debugging
+
+  try {
+    const response = await medusaClient.productTags.list(
+      { limit, offset },
+      { next: { tags: ["tags"] } }
+    );
+
+    const tags = response.product_tags;
+    const count = response.product_tags.length;
+
+    console.log("Tags retrieved:", tags)  // Logging the tags
+
+    return {
+      tags,
+      count,
+    };
+  } catch (err: any) {
+    if (err.response) {
+      console.error("Request error:", err.response.data);
+      console.error("Status code:", err.response.status);
+    } else if (err.request) {
+      console.error("No response received:", err.request);
+    } else {
+      console.error("General error:", err.message);
+    }
+    throw err; // Re-throw the error to be handled by the caller
+  }
+});
+
+export const getTagByValue = cache(async function (
+  value: string
+): Promise<ProductTag | null> {
+  return await retrieveTag(value);
+});
+
+// full_web-storefront/src/lib/data/index.ts
+export const getProductsByTagValue = cache(async function ({
+  value,
+  regionId,
+}: {
+  value: string;
+  regionId: string;
+}): Promise<PricedProduct[]> {
+  const headers = getMedusaHeaders(["products"]);
+
+  // Fetch the tag by value
+  const { product_tags } = await medusaClient.productTags.list(
+    { value: [value] },
+    headers
+  );
+
+  if (product_tags.length === 0) {
+    return [];
+  }
+
+  const tagId = product_tags[0].id;
+
+  // Fetch products associated with the tag
+  const { products } = await medusaClient.products.list(
+    {
+      tags: [tagId],
+      region_id: regionId,
+      expand: "variants,variants.prices,options,options.values",
+    },
+    headers
+  );
+
+
+  return products;
+  
+});
+
+
+
+
+// full_web-storefront/src/lib/data/index.ts
+
+/**
+ * Transforms the raw product data into the format required by the carousel.
+ *
+ * @param products - Array of raw product data
+ * @returns Array of transformed products
+ */
+export const getTransformedProducts = cache(async (products: PricedProduct[]): Promise<ProductPreviewType[]> => {
+  return products.map(product => {
+    // Otteniamo il prezzo dalla prima variante disponibile
+    const variant = product.variants[0];
+    const calculated_price = variant?.calculated_price ?? 0;
+    const original_price = variant?.original_price ?? 0;
+    const difference = calculated_price !== 0 ? (original_price - calculated_price).toFixed(2) : "0";
+
+    return {
+      id: product.id ?? "",
+      title: product.title ?? "",
+      handle: product.handle ?? "",
+      thumbnail: product.thumbnail ?? "",
+      price: {
+        calculated_price: calculated_price.toString(),
+        original_price: original_price.toString(),
+        difference: difference,
+        price_type: calculated_price < original_price ? "sale" : "default"
+      },
+      variants: product.variants.map(variant => ({
+        id: variant.id ?? ""
+      })),
+    };
+  });
+});
+
+/**
+ * Retrieves the current cart ID or creates a new cart if none exists.
+ *
+ * @returns The current cart ID
+ */
+export const getCurrentCartId = cache(async (): Promise<string> => {
+  let cart = await getCart('default'); // Replace 'default' with logic to retrieve the actual cart ID
+
+  if (!cart) {
+    cart = await createCart();
+    if (!cart) {
+      throw new Error("Unable to create a new cart.");
+    }
+  }
+
+  return cart.id;
+});
+
+// full_web-storefront/src/lib/data/index.ts
+
+export const transformProductsForCarousel = (
+  products: PricedProduct[],
+  currencyCode: string
+) => {
+  return products.map((product) => {
+    const variant = product.variants[0]
+
+    let calculatedPrice = null
+    let originalPrice = null
+
+    if (variant && variant.prices && variant.prices.length > 0) {
+      // Find the price matching the currency code
+      const price = variant.prices.find(
+        (p) => p.currency_code.toLowerCase() === currencyCode.toLowerCase()
+      )
+
+      if (price) {
+        calculatedPrice = price.amount
+        originalPrice = price.amount
+      }
+    }
+
+    return {
+      id: product.id,
+      title: product.title,
+      handle: product.handle,
+      thumbnail: product.thumbnail,
+      variants: variant ? [{ id: variant.id }] : [],
+      price: {
+        calculated_price: calculatedPrice,
+        original_price: originalPrice,
+      },
+    }
+  })
+}
+
+
+export function transformProductForClient(product: PricedProduct): any {
+  return {
+    id: product.id,
+    title: product.title,
+    handle: product.handle,
+    thumbnail: product.thumbnail,
+    description: product.description,
+    variants: product.variants?.map((variant) => ({
+      id: variant.id,
+      title: variant.title,
+      prices: variant.prices?.map((price) => ({
+        id: price.id,
+        amount: price.amount,
+        currency_code: price.currency_code,
+      })),
+      options: variant.options?.map((option) => ({
+        option_id: option.option_id,
+        value: option.value,
+      })),
+    })),
+    options: product.options?.map((option) => ({
+      id: option.id,
+      title: option.title,
+      values: option.values?.map((value) => ({
+        id: value.id,
+        value: value.value,
+      })),
+    })),
+  };
+}

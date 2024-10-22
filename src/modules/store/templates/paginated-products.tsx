@@ -1,3 +1,5 @@
+// File: full_web-storefront\src\modules\store\templates\paginated-products.tsx
+
 import { getProductsListWithSort, getRegion } from "@lib/data"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
@@ -10,6 +12,7 @@ type PaginatedProductsParams = {
   collection_id?: string[]
   category_id?: string[]
   id?: string[]
+  tags?: string[]  // Updated to use 'tags'
 }
 
 export default async function PaginatedProducts({
@@ -17,6 +20,7 @@ export default async function PaginatedProducts({
   page,
   collectionId,
   categoryId,
+  tagId,  // tagId remains as a single string
   productsIds,
   countryCode,
 }: {
@@ -24,6 +28,7 @@ export default async function PaginatedProducts({
   page: number
   collectionId?: string
   categoryId?: string
+  tagId?: string  // tagId remains as a single string
   productsIds?: string[]
   countryCode: string
 }) {
@@ -43,6 +48,10 @@ export default async function PaginatedProducts({
 
   if (categoryId) {
     queryParams["category_id"] = [categoryId]
+  }
+
+  if (tagId) {
+    queryParams["tags"] = [tagId]  // Corrected to use 'tags'
   }
 
   if (productsIds) {

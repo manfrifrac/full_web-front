@@ -1,4 +1,6 @@
-const path = require("path")
+// full_web-storefront/tailwind.config.js
+
+const path = require("path");
 
 module.exports = {
   darkMode: "class",
@@ -12,6 +14,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+        backdropBlur: {
+          xs: '2px',
+          sm: '4px',
+          DEFAULT: '8px',
+          md: '12px',
+          lg: '16px',
+          xl: '24px',
+        },
       transitionProperty: {
         width: "width margin",
         height: "height",
@@ -34,6 +44,16 @@ module.exports = {
           80: "#1F2937",
           90: "#111827",
         },
+        // Aggiungi i colori Neumorphism
+        neumorphism: {
+          bg: "#e0e0e0",
+          shadowLight: "#ffffff",
+          shadowDark: "#bebebe",
+          primary: "#9900CC", // Colore principale aggiornato
+          secondary: "#d1d1d1",
+        },
+        // Definisci il colore primario
+        primary: "#9900CC",
       },
       borderRadius: {
         none: "0px",
@@ -69,6 +89,11 @@ module.exports = {
           "Ubuntu",
           "sans-serif",
         ],
+      },
+      boxShadow: {
+        // Ombre per Neumorphism
+        'neumorphism-light': '10px 10px 20px #bebebe, -10px -10px 20px #ffffff',
+        'neumorphism-dark': 'inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff',
       },
       keyframes: {
         ring: {
@@ -158,5 +183,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-radix")()],
-}
+  variants: {
+    boxShadow: ['responsive', 'hover', 'active'],
+  },
+  plugins: [require('@tailwindcss/line-clamp'),require("tailwindcss-radix")()],
+};

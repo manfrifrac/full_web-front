@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/localized-client-link/index.tsx
+
 "use client"
 
 import Link from "next/link"

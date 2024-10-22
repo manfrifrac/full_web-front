@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/checkbox/index.tsx
+
 import { Checkbox, Label } from "@medusajs/ui"
 import React from "react"
 
@@ -17,10 +19,10 @@ const CheckboxWithLabel: React.FC<CheckboxProps> = ({
   'data-testid': dataTestId
 }) => {
   return (
-    <div className="flex items-center space-x-2 ">
+    <div className="flex items-center space-x-2 bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-2 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
       <Checkbox
         className="text-base-regular flex items-center gap-x-2"
-        id="checkbox"
+        id={name || "checkbox"}
         role="checkbox"
         type="button"
         checked={checked}
@@ -30,8 +32,8 @@ const CheckboxWithLabel: React.FC<CheckboxProps> = ({
         data-testid={dataTestId}
       />
       <Label
-        htmlFor="checkbox"
-        className="!transform-none !txt-medium"
+        htmlFor={name || "checkbox"}
+        className="!transform-none !txt-medium text-gray-700"
         size="large"
       >
         {label}

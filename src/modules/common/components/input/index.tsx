@@ -1,3 +1,5 @@
+// full_web-storefront/src/modules/common/components/input/index.tsx
+
 import { Label } from "@medusajs/ui"
 import React, { useEffect, useImperativeHandle, useState } from "react"
 
@@ -34,9 +36,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     useImperativeHandle(ref, () => inputRef.current!)
 
     return (
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full bg-neumorphism-bg rounded-lg shadow-neumorphism-light p-3 transition-shadow duration-300 ease-in-out hover:shadow-neumorphism-dark">
         {topLabel && (
-          <Label className="mb-2 txt-compact-medium-plus">{topLabel}</Label>
+          <Label className="mb-2 txt-compact-medium-plus text-gray-700">{topLabel}</Label>
         )}
         <div className="flex relative z-0 w-full txt-compact-medium">
           <input
@@ -44,14 +46,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             name={name}
             placeholder=" "
             required={required}
-            className="pt-4 pb-1 block w-full h-11 px-4 mt-0 bg-ui-bg-field border rounded-md appearance-none focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active border-ui-border-base hover:bg-ui-bg-field-hover"
+            className="pt-4 pb-1 block w-full h-11 px-4 mt-0 bg-transparent border-none focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active text-gray-800"
             {...props}
             ref={inputRef}
           />
           <label
             htmlFor={name}
             onClick={() => inputRef.current?.focus()}
-            className="flex items-center justify-center mx-3 px-1 transition-all absolute duration-300 top-3 -z-1 origin-0 text-ui-fg-subtle"
+            className="flex items-center justify-center mx-3 px-1 transition-all absolute duration-300 top-3 -z-1 origin-0 text-gray-600"
           >
             {label}
             {required && <span className="text-rose-500">*</span>}
@@ -60,7 +62,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-ui-fg-subtle px-4 focus:outline-none transition-all duration-150 outline-none focus:text-ui-fg-base absolute right-0 top-3"
+              className="text-gray-600 px-4 focus:outline-none transition-all duration-150 outline-none focus:text-gray-800 absolute right-0 top-3"
             >
               {showPassword ? <Eye /> : <EyeOff />}
             </button>
